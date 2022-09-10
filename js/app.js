@@ -5,16 +5,21 @@ const nameInput = studentForm['name'];
 const ageInput = studentForm['age'];
 const rollInput = studentForm['roll'];
 
-const students = [
-    {
-        name: '',
-        age: Number,
-        roll: Number
-    }
-];
+
+const students = JSON.parse(localStorage.getItem("Students")) || [];
 
 const addStudents = (name, age, roll) => {
+    students.push(
+        {
+            name,
+            age,
+            roll
+        }
+    );
 
+    localStorage.setItem("Students", JSON.stringify(students));
+
+    return { name, age, roll };
 }
 
 const createStudentElement = ({ name, age, roll }) => {
@@ -23,10 +28,31 @@ const createStudentElement = ({ name, age, roll }) => {
     const studentAge = document.createElement('p');
     const studentRoll = document.createElement('p');
 
-    studentName.innerText = "Student Name:" + name;
-    studentAge.innerText = "Student Age -" + age;
-    studentRoll.innerText = "Student Roll -" + roll;
+    studentName.innerText = "Student Name: " + name;
+    studentAge.innerText = "Student Age - " + age;
+    studentRoll.innerText = "Student Roll - " + roll;
 
     studentDiv.append(studentName, studentAge, studentRoll);
     studentsContainer.appendChild(studentDiv);
+
+    studentsContainer.style.display = students.length === 0 ? "none" : "flex";
+}
+
+studentsContainer.style.display = students.length === 0 ? "none" : "flex";
+
+students.forEach(createStudentElement);
+
+studentForm.onsubmit = (e) => {
+    e.preventDefault();
+
+    const newStudent = addStudents(
+        nameInput.value,
+        ageInput.value,
+        rollInput.value
+    )
+    createStudentElement(newStudent);
+
+    nameInput.value = "";
+    ageInput.value = "";
+    rollInput.value = "";
 }
